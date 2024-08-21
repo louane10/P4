@@ -239,6 +239,13 @@
       if ($(this).hasClass("active-tag")) {
         return;
       }
+      // Enlève la classe active des éléments actuellement actifs
+      $(".nav-link.active").removeClass("active");
+
+      // Ajoute la classe active à l'élément cliqué
+      $(this).addClass("active");
+
+
       $(".active-tag").removeClass("active active-tag");
       $(this).addClass("active-tag");
 
