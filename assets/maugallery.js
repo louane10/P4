@@ -119,82 +119,52 @@
         .attr("src", element.attr("src"));
       $(`#${lightboxId}`).modal("toggle");
     },
-    prevImage() {
+    prevImage(lightboxId) {
       let activeImage = null;
-      $("img.gallery-item").each(function() {
-        if ($(this).attr("src") === $(".lightboxImage").attr("src")) {
-          activeImage = $(this);
-        }
-      });
-      let activeTag = $(".tags-bar span.active-tag").data("images-toggle");
-      let imagesCollection = [];
-      if (activeTag === "all") {
-        $(".item-column").each(function() {
-          if ($(this).children("img").length) {
-            imagesCollection.push($(this).children("img"));
-          }
-        });
-      } else {
-        $(".item-column").each(function() {
-          if (
-            $(this)
-              .children("img")
-              .data("gallery-tag") === activeTag
-          ) {
-            imagesCollection.push($(this).children("img"));
-          }
-        });
-      }
-      let index = 0,
-        next = null;
+    let imagesCollection = [];
+    let activeTag = $(".tags-bar span.active-tag").data("images-toggle");
 
-      $(imagesCollection).each(function(i) {
-        if ($(activeImage).attr("src") === $(this).attr("src")) {
-          index = i ;
+    $("#" + lightboxId + " .lightboxImage").each(function() {
+        activeImage = $(this);
+    });
+
+    $(".item-column img").each(function() {
+        if (activeTag === "all" || $(this).data("gallery-tag") === activeTag) {
+            imagesCollection.push($(this));
         }
-      });
-      next =
-        imagesCollection[index] ||
-        imagesCollection[imagesCollection.length - 1];
-      $(".lightboxImage").attr("src", $(next).attr("src"));
-    },
-    nextImage() {
+    });
+
+    let index = imagesCollection.findIndex(img => img.attr("src") === activeImage.attr("src"));
+
+    // Détermine l'image précédente
+    let prevIndex = (index - 1 + imagesCollection.length) % imagesCollection.length;
+    let prevImage = imagesCollection[prevIndex];
+
+    // Met à jour l'image dans le lightbox
+    $("#" + lightboxId + " .lightboxImage").attr("src", prevImage.attr("src"));
+},
+    nextImage(lightboxId) {
       let activeImage = null;
-      $("img.gallery-item").each(function() {
-        if ($(this).attr("src") === $(".lightboxImage").attr("src")) {
-          activeImage = $(this);
-        }
-      });
-      let activeTag = $(".tags-bar span.active-tag").data("images-toggle");
       let imagesCollection = [];
-      if (activeTag === "all") {
-        $(".item-column").each(function() {
-          if ($(this).children("img").length) {
-            imagesCollection.push($(this).children("img"));
-          }
-        });
-      } else {
-        $(".item-column").each(function() {
-          if (
-            $(this)
-              .children("img")
-              .data("gallery-tag") === activeTag
-          ) {
-            imagesCollection.push($(this).children("img"));
-          }
-        });
-      }
-      let index = 0,
-        next = null;
+      let activeTag = $(".tags-bar span.active-tag").data("images-toggle");
 
-      $(imagesCollection).each(function(i) {
-        if ($(activeImage).attr("src") === $(this).attr("src")) {
-          index = i;
-        }
+      $("#" + lightboxId + " .lightboxImage").each(function() {
+          activeImage = $(this);
       });
-      next = imagesCollection[index] || imagesCollection[0];
-      $(".lightboxImage").attr("src", $(next).attr("src"));
-    },
+      $(".item-column img").each(function() {
+          if (activeTag === "all" || $(this).data("gallery-tag") === activeTag) {
+              imagesCollection.push($(this));
+          }
+      });
+      let index = imagesCollection.findIndex(img => img.attr("src") === activeImage.attr("src"));
+  
+      // Détermine l'image suivante
+      let nextIndex = (index + 1) % imagesCollection.length;
+      let nextImage = imagesCollection[nextIndex];
+  
+      // Met à jour l'image dans le lightbox
+      $("#" + lightboxId + " .lightboxImage").attr("src", nextImage.attr("src"));
+  },
     createLightBox(gallery, lightboxId, navigation) {
       gallery.append(`<div class="modal fade" id="${
         lightboxId ? lightboxId : "galleryLightbox"
